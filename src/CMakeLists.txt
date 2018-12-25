@@ -18,3 +18,5 @@ set_target_properties(
 	PROPERTIES
 	CXX_EXTENSIONS OFF
 	)
+
+install(TARGETS clcc RUNTIME DESTINATION bin)
