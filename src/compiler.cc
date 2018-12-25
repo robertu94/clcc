@@ -1,9 +1,9 @@
 #include <algorithm>
 #include <fstream>
 #include <iostream>
+#include <regex>
 #include <sstream>
 #include <vector>
-#include <regex>
 
 #define __CL_ENABLE_EXCEPTIONS
 #include <CL/cl.hpp>
@@ -23,12 +23,12 @@ find_or_exit(Vector available, NameOrID option, const char* message)
     return available.at(option.getId());
   } else {
     auto requested = std::regex(option.getName(), std::regex::icase);
-		std::smatch match;
+    std::smatch match;
     auto found =
       std::find_if(std::begin(available), std::end(available),
                    [requested, &match](auto const& item) {
                      auto name = item.template getInfo<Field>();
-										 return std::regex_search(name, match, requested);
+                     return std::regex_search(name, match, requested);
                    });
 
     if (found != std::end(available)) {
@@ -69,15 +69,13 @@ compile(CommandLineOptions options)
   auto program = cl::Program(context, program_sources);
 
   try {
-		if(!options.quiet)
-		{
-			std::cout << "compiling for: " << platform.getInfo<CL_PLATFORM_NAME>() << " "
-								<< device.getInfo<CL_DEVICE_NAME>() << std::endl;
-			if(!options.compile_options.empty())
-			{
-				std::cout << "options: " << options.compile_options << std::endl;
-			}
-		}
+    if (!options.quiet) {
+      std::cout << "compiling for: " << platform.getInfo<CL_PLATFORM_NAME>()
+                << " " << device.getInfo<CL_DEVICE_NAME>() << std::endl;
+      if (!options.compile_options.empty()) {
+        std::cout << "options: " << options.compile_options << std::endl;
+      }
+    }
     program.build({ device });
   } catch (cl::Error const& e) {
     std::cerr << e.what() << " : " << e.err() << std::endl;
