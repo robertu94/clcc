@@ -3,6 +3,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <unistd.h>
+#include <cstdlib>
 
 void
 set(NameOrID& storage, std::string const& value)
@@ -29,7 +30,10 @@ usage()
                "\t-h\tlists the installed OpenCL devices and platforms\n"
                "\t-p\tthe OpenCL platform to use\n"
                "\t-q\tprint less output\n"
-               "\t--\tonly options passed to the OpenCL compiler after this"
+               "\t--\tonly options passed to the OpenCL compiler after this\n"
+               "Environmental\n"
+							 "\tCLCC_PLATFORM\tthe OpenCL platform to use; overwritten by options\n"
+							 "\tCLCC_DEVICE\tthe OpenCL device to use; overwritten by options\n"
             << std::endl;
 }
 
@@ -37,6 +41,14 @@ CommandLineOptions
 parse_options(int argc, char* const argv[])
 {
   CommandLineOptions options;
+
+	if(char* platform = getenv("CLCC_PLATFORM")){
+		set(options.platform, platform);
+	}
+
+	if(char* target = getenv("CLCC_DEVICE")){
+		set(options.device, target);
+	}
 
   int option;
   while ((option = getopt(argc, argv, "d:hlp:q")) != -1) {

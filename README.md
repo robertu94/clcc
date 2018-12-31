@@ -31,7 +31,11 @@ Options
 	-p	the OpenCL platform to use
 	-q	print less output
 	--	only options passed to the OpenCL compiler after this
+Environmental
+	CLCC_PLATFORM	the OpenCL platform to use; overwritten by options
+	CLCC_DEVICE	the OpenCL device to use; overwritten by options
 ```
+
 
 `device` and `platform` accept arbitrary regular expressions which they match case insensitively to those reported by OpenCL.
 
