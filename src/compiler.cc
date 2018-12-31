@@ -76,7 +76,7 @@ compile(CommandLineOptions options)
         std::cout << "options: " << options.compile_options << std::endl;
       }
     }
-    program.build({ device });
+    program.build({ device }, options.compile_options.c_str());
   } catch (cl::Error const& e) {
     std::cerr << e.what() << " : " << e.err() << std::endl;
     std::cerr << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device)
