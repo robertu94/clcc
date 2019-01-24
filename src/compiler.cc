@@ -4,6 +4,7 @@
 #include <regex>
 #include <sstream>
 #include <vector>
+#include <stdexcept>
 
 #define __CL_ENABLE_EXCEPTIONS
 #include <CL/cl.hpp>
@@ -44,6 +45,7 @@ std::string
 read_file(std::string path)
 {
   std::ifstream infile(path);
+	if(infile.fail()) throw std::runtime_error(path + "not found");
   std::ostringstream stream;
   stream << infile.rdbuf();
   return stream.str();
@@ -91,12 +93,14 @@ list_devices(CommandLineOptions options)
   cl::Platform::get(&platforms);
   for (auto platform : platforms) {
     std::vector<cl::Device> devices;
-    platform.getDevices(CL_DEVICE_TYPE_ALL, &devices);
-    auto platform_name = platform.getInfo<CL_PLATFORM_NAME>();
-    for (auto device : devices) {
-      auto device_name = device.getInfo<CL_DEVICE_NAME>();
-      std::cout << platform_name << '\t' << device_name << std::endl;
-    }
+    try {
+      platform.getDevices(CL_DEVICE_TYPE_ALL, &devices);
+      auto platform_name = platform.getInfo<CL_PLATFORM_NAME>();
+      for (auto device : devices) {
+        auto device_name = device.getInfo<CL_DEVICE_NAME>();
+        std::cout << platform_name << '\t' << device_name << std::endl;
+      }
+    } catch(cl::Error const&) {/*intentional noop*/}
   }
 }
 
